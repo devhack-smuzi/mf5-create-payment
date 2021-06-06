@@ -1,6 +1,8 @@
 const HtmlWebpackPlugin = require("html-webpack-plugin");
 const ModuleFederationPlugin = require("webpack/lib/container/ModuleFederationPlugin");
+const MiniCssExtractPlugin = require('mini-css-extract-plugin');
 
+const webpack = require('webpack');
 const deps = require("./package.json").dependencies;
 const env = process.env.NODE_ENV || 'development';
 
@@ -32,6 +34,15 @@ module.exports = {
           fullySpecified: false,
         },
       },
+      {
+        test: /\.css$/,
+        use: [
+          MiniCssExtractPlugin.loader,
+          {
+            loader: 'css-loader',
+          },
+        ],
+      },
       { test: /\.tsx?$/, loader: 'ts-loader' },
     ],
   },
@@ -42,23 +53,32 @@ module.exports = {
       filename: "remoteEntry.js",
       remotes: {},
       exposes: {
-        "./MF5CreatePayment": "./src/CreatePayment",
+        "./MF5CreatePayment": "./src/components/CreatePayment",
+        "./MF5Bundle": "./src/components/Bundle",
       },
       shared: {
         ...deps,
         react: {
+          eager: true,
           singleton: true,
-          requiredVersion: deps.react,
         },
-        "react-dom": {
+        'react-dom': {
           singleton: true,
-          requiredVersion: deps["react-dom"],
+          eager: true,
+        },
+        antd: {
+          eager: true,
         },
       },
     }),
     new HtmlWebpackPlugin({
       template: "./src/index.html",
       chunks: ["main"],
+    }),
+    new webpack.ContextReplacementPlugin(/moment[/\\]locale$/, /ru|en-gb/),
+    new MiniCssExtractPlugin({
+      filename: '[name].css',
+      chunkFilename: '[id].css',
     }),
   ],
 };
