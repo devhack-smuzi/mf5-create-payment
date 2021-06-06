@@ -1,5 +1,7 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Table } from 'antd';
+import { Button, Radio } from 'antd';
+import { DoubleRightOutlined } from '@ant-design/icons';
 
 const dataSource = [
   {
@@ -35,9 +37,31 @@ const columns = [
 ];
 
 const CreatePayment = () => {
+  const [level, setLevelt] = useState(0);
+
+  const setLevel = (value: number) => {
+    window.postMessage({ type: 'SET_LEVEL', payload: value }, window.origin);
+    setLevelt(value);
+  };
+
+  const handleNextLeve = () => {
+    if (level === 3) return setLevel(0);
+    setLevel(level + 1);
+  };
+
   return (
     <div>
-      CreatePayment:
+      <br />
+      <br />
+      <Button
+        type="primary"
+        shape="round"
+        icon={<DoubleRightOutlined />}
+        onClick={handleNextLeve}>
+        Дальше
+      </Button>
+      <br />
+      <br />
       <Table dataSource={dataSource} columns={columns} />
     </div>
   );
