@@ -3,6 +3,8 @@ import { Table } from 'antd';
 import { Button, Radio } from 'antd';
 import { DoubleRightOutlined } from '@ant-design/icons';
 
+const MF7Levels = React.lazy(() => import('mf7Levels/MF7Levels'));
+
 const dataSource = [
   {
     key: '1',
@@ -51,6 +53,9 @@ const CreatePayment = () => {
 
   return (
     <div>
+      <React.Suspense fallback={<div>....loading MF7Levels</div>}>
+        <MF7Levels />
+      </React.Suspense>
       <br />
       <br />
       <Button
